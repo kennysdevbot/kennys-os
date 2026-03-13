@@ -12,13 +12,23 @@ interface CardModalProps {
 }
 
 export const CardModal: React.FC<CardModalProps> = ({ isOpen, card, onClose, onSave }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState<string>('');
-  const [dueDate, setDueDate] = useState('');
-  const [tags, setTags] = useState('');
+  const [title, setTitle] = useState(card?.title || '');
+  const [description, setDescription] = useState(card?.description || '');
+  const [priority, setPriority] = useState<string>(card?.priority || '');
+  const [dueDate, setDueDate] = useState(card?.due_date || '');
+  const [tags, setTags] = useState(card?.tags?.join(', ') || '');
+
+  const resetForm = () => {
+    setTitle('');
+    setDescription('');
+    setPriority('');
+    setDueDate('');
+    setTags('');
+  };
 
   useEffect(() => {
+    if (!isOpen) return;
+    
     if (card) {
       setTitle(card.title);
       setDescription(card.description || '');
@@ -28,15 +38,8 @@ export const CardModal: React.FC<CardModalProps> = ({ isOpen, card, onClose, onS
     } else {
       resetForm();
     }
-  }, [card, isOpen]);
-
-  const resetForm = () => {
-    setTitle('');
-    setDescription('');
-    setPriority('');
-    setDueDate('');
-    setTags('');
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [card?.id, isOpen]);
 
   const handleSave = () => {
     if (!title.trim()) return;

@@ -12,12 +12,21 @@ interface NoteModalProps {
 }
 
 export const NoteModal: React.FC<NoteModalProps> = ({ isOpen, note, onClose, onSave }) => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [category, setCategory] = useState('');
-  const [tags, setTags] = useState('');
+  const [title, setTitle] = useState(note?.title || '');
+  const [content, setContent] = useState(note?.content || '');
+  const [category, setCategory] = useState(note?.category || '');
+  const [tags, setTags] = useState(note?.tags?.join(', ') || '');
+
+  const resetForm = () => {
+    setTitle('');
+    setContent('');
+    setCategory('');
+    setTags('');
+  };
 
   useEffect(() => {
+    if (!isOpen) return;
+    
     if (note) {
       setTitle(note.title);
       setContent(note.content);
@@ -26,14 +35,8 @@ export const NoteModal: React.FC<NoteModalProps> = ({ isOpen, note, onClose, onS
     } else {
       resetForm();
     }
-  }, [note, isOpen]);
-
-  const resetForm = () => {
-    setTitle('');
-    setContent('');
-    setCategory('');
-    setTags('');
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [note?.id, isOpen]);
 
   const handleSave = () => {
     if (!title.trim() || !content.trim()) return;
