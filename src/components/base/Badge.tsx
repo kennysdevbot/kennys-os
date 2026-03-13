@@ -3,8 +3,9 @@ import type { Priority } from '../../types';
 
 interface BadgeProps {
   children: React.ReactNode;
-  variant?: 'default' | 'priority';
+  variant?: 'default' | 'primary' | 'secondary' | 'priority';
   priority?: Priority;
+  size?: 'xs' | 'sm' | 'md';
   className?: string;
 }
 
@@ -12,9 +13,16 @@ export const Badge: React.FC<BadgeProps> = ({
   children,
   variant = 'default',
   priority,
+  size = 'sm',
   className = '',
 }) => {
-  const baseStyles = 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium';
+  const baseStyles = 'inline-flex items-center rounded-full font-medium whitespace-nowrap';
+  
+  const sizeStyles = {
+    xs: 'px-1.5 py-0.5 text-xs',
+    sm: 'px-2 py-1 text-xs',
+    md: 'px-3 py-1.5 text-sm',
+  };
   
   const priorityColors = {
     low: 'bg-accent-blue/20 text-accent-blue border border-accent-blue/30',
@@ -23,14 +31,15 @@ export const Badge: React.FC<BadgeProps> = ({
     critical: 'bg-accent-purple/20 text-accent-purple border border-accent-purple/30',
   };
   
-  const defaultStyles = 'bg-bg-elevated text-text-secondary border border-border-default';
-  
-  const variantStyles = variant === 'priority' && priority
-    ? priorityColors[priority]
-    : defaultStyles;
+  const variantStyles = {
+    default: 'bg-bg-elevated text-text-secondary border border-border-default',
+    primary: 'bg-accent-blue/20 text-accent-blue border border-accent-blue/30',
+    secondary: 'bg-bg-tertiary text-text-secondary border border-border-default',
+    priority: priority ? priorityColors[priority] : 'bg-bg-elevated text-text-secondary',
+  };
   
   return (
-    <span className={`${baseStyles} ${variantStyles} ${className}`}>
+    <span className={`${baseStyles} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}>
       {children}
     </span>
   );
