@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 interface NavItem {
@@ -48,9 +48,37 @@ const navItems: NavItem[] = [
 
 export const Sidebar: React.FC = () => {
   const location = useLocation();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   
   return (
-    <aside className="w-64 bg-bg-secondary border-r border-border-default flex flex-col">
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsMobileOpen(!isMobileOpen)}
+        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-bg-secondary border border-border-default text-text-primary hover:bg-bg-elevated transition-colors"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {isMobileOpen ? (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          ) : (
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          )}
+        </svg>
+      </button>
+
+      {/* Mobile Backdrop */}
+      {isMobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 z-30 bg-black/40"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`
+        fixed md:static w-64 h-screen bg-bg-secondary border-r border-border-default flex flex-col z-40 transition-transform
+        ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `}>
       <div className="p-6 border-b border-border-default">
         <h1 className="text-2xl font-bold text-text-primary">Kenny's OS</h1>
         <p className="text-sm text-text-tertiary mt-1">Personal Dashboard</p>
@@ -64,6 +92,7 @@ export const Sidebar: React.FC = () => {
               <li key={item.path}>
                 <Link
                   to={item.path}
+                  onClick={() => setIsMobileOpen(false)}
                   className={`
                     flex items-center gap-3 px-3 py-2 rounded transition-colors
                     ${isActive
@@ -80,6 +109,7 @@ export const Sidebar: React.FC = () => {
           })}
         </ul>
       </nav>
-    </aside>
+      </aside>
+    </>
   );
 };

@@ -4,3 +4,4 @@ export { useCards } from './useCards';
 export { useNotes } from './useNotes';
 export { useInboxItems } from './useInboxItems';
 export { useSearch } from './useSearch';
+export { useKeyboardNavigation } from './useKeyboardNavigation';
