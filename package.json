@@ -9,13 +9,16 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "setup:db": "node scripts/setup-db.js",
-    "setup:bootstrap": "node server.js"
+    "setup:bootstrap": "node server.js",
+    "test:db": "node scripts/test-db.js",
+    "migration:show": "bash scripts/show-migration.sh"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@supabase/supabase-js": "^2.99.1",
+    "dotenv": "^17.3.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.1"
