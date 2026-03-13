@@ -1,7 +1,52 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '../components/base';
+import { useCards } from '../hooks/useCards';
+import { useNotes } from '../hooks/useNotes';
+import { useInboxItems } from '../hooks/useInboxItems';
+import { LoadingSpinner } from '../components/common/LoadingSpinner';
 
 export const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
+  const cardsData = useCards(null);
+  const notesData = useNotes();
+  const inboxData = useInboxItems();
+  const [loading, setLoading] = useState(true);
+
+  const cards = cardsData?.cards || [];
+  const cardsLoading = cardsData?.loading ?? true;
+  const notes = notesData?.notes || [];
+  const notesLoading = notesData?.loading ?? true;
+  const inboxItems = inboxData?.inboxItems || [];
+  const inboxLoading = inboxData?.loading ?? true;
+
+  useEffect(() => {
+    // Wait for all data to load
+    if (!cardsLoading && !notesLoading && !inboxLoading) {
+      setLoading(false);
+    }
+  }, [cardsLoading, notesLoading, inboxLoading]);
+
+  const activeTasks = cards?.filter(c => c?.priority === 'critical' || c?.priority === 'high')?.length || 0;
+  const totalNotes = notes?.length || 0;
+  const inboxCount = inboxItems?.length || 0;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  const handleNewTask = () => {
+    navigate('/kanban');
+  };
+
+  const handleNewNote = () => {
+    navigate('/notes');
+  };
+
   return (
     <div>
       <div className="mb-8">
@@ -17,7 +62,7 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-text-tertiary text-sm">Active Tasks</p>
-              <p className="text-3xl font-bold text-text-primary mt-1">0</p>
+              <p className="text-3xl font-bold text-text-primary mt-1">{activeTasks}</p>
             </div>
             <div className="w-12 h-12 bg-accent-blue/20 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,7 +76,7 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-text-tertiary text-sm">Total Notes</p>
-              <p className="text-3xl font-bold text-text-primary mt-1">0</p>
+              <p className="text-3xl font-bold text-text-primary mt-1">{totalNotes}</p>
             </div>
             <div className="w-12 h-12 bg-accent-purple/20 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,7 +90,7 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-text-tertiary text-sm">Inbox Items</p>
-              <p className="text-3xl font-bold text-text-primary mt-1">0</p>
+              <p className="text-3xl font-bold text-text-primary mt-1">{inboxCount}</p>
             </div>
             <div className="w-12 h-12 bg-accent-yellow/20 rounded-full flex items-center justify-center">
               <svg className="w-6 h-6 text-accent-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,7 +104,7 @@ export const Dashboard: React.FC = () => {
       <div className="mt-8">
         <h2 className="text-xl font-semibold text-text-primary mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card hover className="cursor-pointer">
+          <Card hover className="cursor-pointer" onClick={handleNewTask}>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-accent-blue/20 rounded-lg flex items-center justify-center">
                 <svg className="w-5 h-5 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,7 +118,7 @@ export const Dashboard: React.FC = () => {
             </div>
           </Card>
           
-          <Card hover className="cursor-pointer">
+          <Card hover className="cursor-pointer" onClick={handleNewNote}>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-accent-purple/20 rounded-lg flex items-center justify-center">
                 <svg className="w-5 h-5 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
